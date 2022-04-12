@@ -46,6 +46,9 @@ book_ns = api.namespace("book" , description="book requests")
 
 @book_ns.route("/books")
 class Books(Resource):
+    @api.doc(responses = {
+        400:"Error connection database"
+    })
     @api.marshal_list_with(book_model, code=200, envelope="books")
     def get(self):
         '''get all books'''
@@ -57,6 +60,9 @@ class Books(Resource):
         400:"Error register database"
     })
     @api.expect(book_model)
+    @api.doc(responses={
+        400:"Error connection database"
+    })
     def post(self):
         '''add one book'''
         data = request.get_json()
@@ -74,12 +80,18 @@ class Books(Resource):
 @book_ns.route("/book<int:id>")
 class BookResource(Resource):
     @api.marshal_with(book_model, code=200, envelope="book")
+    @api.doc(responses={
+        400:"Error connection database"
+    })
     def get(self, id):
         '''get a book by id'''
         book = Book.query.get_or_404(id)
         return book
 
     @api.marshal_with(book_model, code=200, envelope="book")
+    @api.doc(responses={
+        400:"Error connection database"
+    })
     def put(self, id):
         '''put a book by id'''
         book_to_update = Book.query.get_or_404(id)
@@ -93,6 +105,9 @@ class BookResource(Resource):
         return book_to_update
 
     @api.marshal_with(book_model, code=200, envelope="book deleted")
+    @api.doc(responses={
+        400:"Error connection database"
+    })
     def delete(self, id):
         '''delete a book by id'''
         book_to_delete = Book.query.get_or_404(id)
